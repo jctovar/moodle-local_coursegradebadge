@@ -98,6 +98,6 @@ done
 echo "OK  $ZIP"
 echo "    release   $RELEASE"
 echo "    version   $VERSION"
-echo "    ref       $REF ($(git rev-parse --short "$REF"))"
+echo "    ref       $REF ($(git rev-parse --short "${REF}^{commit}"))"
 echo "    ficheros  $(unzip -Z1 "$ZIP" | grep -cv '/$')"
 echo "    raiz      ${PLUGIN_DIR}/"
