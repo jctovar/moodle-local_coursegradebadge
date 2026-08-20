@@ -1,0 +1,19 @@
+# Ficheros de desarrollo que no deben viajar en el ZIP distribuible.
+# `git archive` (usado por bin/package.sh) respeta export-ignore.
+.editorconfig    export-ignore
+.gitattributes   export-ignore
+.github/         export-ignore
+.gitignore       export-ignore
+bin/             export-ignore
+docs/            export-ignore
+package-lock.json export-ignore
+package.json     export-ignore
+PLAN.md          export-ignore
+
+# Normalización de finales de línea.
+*.php   text eol=lf
+*.js    text eol=lf
+*.css   text eol=lf
+*.mustache text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf

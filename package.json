@@ -2,7 +2,8 @@
     "name": "moodle-local_coursegradebadge",
     "private": true,
     "scripts": {
-        "build": "terser amd/src/injector.js --compress --mangle -o amd/build/injector.min.js"
+        "build": "terser amd/src/injector.js --compress --mangle -o amd/build/injector.min.js",
+        "package": "bin/package.sh"
     },
     "devDependencies": {
         "terser": "^5.31.0"

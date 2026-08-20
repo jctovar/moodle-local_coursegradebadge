@@ -1,5 +1,6 @@
 # Course Grade Badge — `local_coursegradebadge`
 
+[![CI](https://github.com/jctovar/moodle-local_coursegradebadge/actions/workflows/ci.yml/badge.svg)](https://github.com/jctovar/moodle-local_coursegradebadge/actions/workflows/ci.yml)
 ![Moodle](https://img.shields.io/badge/Moodle-5.0%20%2F%205.1%2B-orange)
 ![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue)
 ![Licencia](https://img.shields.io/badge/licencia-GPL--3.0-green)
@@ -90,6 +91,26 @@ npm run build
 `npm run build` compila `amd/src/injector.js` → `amd/build/injector.min.js`
 (terser). El build se commitea al repositorio.
 
+### Empaquetado
+
+```bash
+bin/package.sh            # empaqueta HEAD
+bin/package.sh v0.1.1     # empaqueta un tag concreto
+```
+
+Genera `dist/coursegradebadge-<release>.zip` con **`coursegradebadge/` como
+único directorio raíz**, que es lo que exige el instalador de Moodle (no el
+nombre del repositorio ni el del componente). Solo empaqueta ficheros
+commiteados; los de desarrollo se excluyen vía `export-ignore` en
+`.gitattributes`. El script aborta si el árbol está sucio, si el tag no
+coincide con `$plugin->release` o si la estructura del ZIP no es la esperada.
+
+### Integración continua
+
+`.github/workflows/ci.yml` ejecuta **moodle-plugin-ci** (phplint, Code Checker,
+PHPDoc Checker, validate, savepoints, Mustache lint, grunt, PHPUnit, Behat)
+sobre la matriz Moodle 5.0/5.1 × PHP 8.2/8.3, más una pasada en MariaDB.
+
 ### Estructura
 
 ```text
@@ -142,7 +163,7 @@ npm run build
 | Versión | Contenido |
 | --- | --- |
 | 0.2 | Badge con enlace al reporte de calificaciones; etiqueta "parcial"; ajustes `fw-bold` (Bootstrap 5) |
-| 1.0 | Ajustes administrativos (`enabled`, filtro por categoría, estilo semáforo), caché MUC con observer de `user_graded`, CI con moodle-plugin-ci (PHPUnit/Behat), piloto SUAyED |
+| 1.0 | Ajustes administrativos (`enabled`, filtro por categoría, estilo semáforo), caché MUC con observer de `user_graded`, suite PHPUnit/Behat, piloto SUAyED |
 
 Ver `PLAN.md` para el roadmap completo (Fases 4–8) y el registro de riesgos.
 
