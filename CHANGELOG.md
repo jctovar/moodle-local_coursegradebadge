@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.3 — 2026-08-20
+
+### Fixed
+
+- **El badge no aparecia en instalaciones servidas desde un subdirectorio.**
+  El hook comparaba `$PAGE->url->get_path()` contra la cadena literal
+  `/my/index.php`, pero `moodle_url` antepone `$CFG->wwwroot`, de modo que en un
+  Moodle bajo `/2026-2/` la ruta es `/2026-2/my/index.php` y el modulo AMD nunca
+  llegaba a cargarse. La comparacion se construye ahora con `moodle_url`.
+- **El ancla del badge no existia en Moodle 5.x.** `block_myoverview` renderiza
+  el avance como `.progress-text`; no hay ningun `.progress`. El badge caia al
+  final de la tarjeta en lugar de bajo la barra de avance.
+- **Las vistas Lista y Resumen no recibian badge.** El selector de tarjeta
+  dependia de `.course-card`, presente solo en la vista Tarjetas. Se usa ahora
+  `[data-region="course-content"]`, comun a las tres vistas.
+
+### Added
+
+- Primera prueba PHPUnit: `hook_callbacks_test`, con regresion explicita para el
+  caso del subdirectorio.
+
 ## 0.1.2 — 2026-08-20
 
 ### Changed

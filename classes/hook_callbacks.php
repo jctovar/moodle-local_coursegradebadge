@@ -47,11 +47,33 @@ class hook_callbacks {
             return;
         }
 
-        $path = $PAGE->url ? $PAGE->url->get_path() : '';
-        if (!in_array($path, ['/my/index.php', '/my/courses.php'], true)) {
+        if (!self::is_dashboard_url($PAGE->url)) {
             return;
         }
 
         $PAGE->requires->js_call_amd('local_coursegradebadge/injector', 'init');
+    }
+
+    /**
+     * Whether the given URL is one of the dashboard pages the badge belongs on.
+     *
+     * The comparison is built from moodle_url rather than from literal paths, so
+     * it keeps working when Moodle is served from a subdirectory and get_path()
+     * returns something like '/2026-2/my/index.php'.
+     *
+     * @param \moodle_url|null $url The page URL, or null when the page has none.
+     * @return bool True when the URL is the dashboard or the my courses page.
+     */
+    public static function is_dashboard_url(?\moodle_url $url): bool {
+        if ($url === null) {
+            return false;
+        }
+
+        $dashboards = [
+            (new \moodle_url('/my/index.php'))->get_path(),
+            (new \moodle_url('/my/courses.php'))->get_path(),
+        ];
+
+        return in_array($url->get_path(), $dashboards, true);
     }
 }

@@ -22,10 +22,14 @@
  */
 define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Templates) {
 
+    // block_myoverview marks every card with data-region="course-content" in the
+    // cards, list and summary views, and renders the progress as .progress-text
+    // (there is no .progress bar). The extra selectors are fallbacks for themes
+    // or Moodle versions that still use the older markup.
     const SELECTORS = {
         coursesView: '[data-region="courses-view"]',
-        card: '[data-region="course-info-container"], .course-card',
-        progress: '.progress, [data-region="progress"]',
+        card: '[data-region="course-content"], [data-region="course-info-container"], .course-card',
+        progress: '.progress-text, .progress, [data-region="progress"]',
         badge: '.lcgb-badge',
     };
 
