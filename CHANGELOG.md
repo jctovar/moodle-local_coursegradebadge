@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.7 — 2026-08-20
+
+### Added
+
+- **Suite Behat** que recorre el camino completo por primera vez: hook, carga
+  del AMD, llamada al servicio web e insercion del badge en la tarjeta. Tres
+  escenarios: estudiante con nota (ve el badge), estudiante sin nota y docente
+  (no lo ven).
+- Paso propio `the course total grade for "..." in course "..." is "..."`. El
+  item de curso no tiene `itemname`, asi que el generador de core no puede
+  apuntarlo; el paso lo sobrescribe via `grade_item::update_final_grade()`, de
+  modo que el escenario no depende de un recalculo diferido.
+
 ## 0.1.6 — 2026-08-20
 
 ### Changed
