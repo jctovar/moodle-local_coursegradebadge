@@ -71,7 +71,13 @@ git archive --format=zip --prefix="${PLUGIN_DIR}/" -o "$ZIP" "$REF"
 
 # Verificacion: todo debe colgar de un unico directorio raiz correcto, y los
 # ficheros de desarrollo no deben haberse colado.
-BAD_ROOT=$(unzip -Z1 "$ZIP" | grep -v "^${PLUGIN_DIR}/" || true)
+#
+# El listado se captura una sola vez. Encadenar `unzip -Z1 | grep -q` mata unzip
+# con SIGPIPE en cuanto grep encuentra la coincidencia, y con `set -o pipefail`
+# eso hace fallar la comprobacion segun donde caiga la coincidencia en la lista.
+ENTRIES=$(unzip -Z1 "$ZIP")
+
+BAD_ROOT=$(printf '%s\n' "$ENTRIES" | grep -v "^${PLUGIN_DIR}/" || true)
 if [ -n "$BAD_ROOT" ]; then
     echo "error: hay entradas fuera de ${PLUGIN_DIR}/:" >&2
     echo "$BAD_ROOT" >&2
@@ -80,7 +86,7 @@ fi
 
 for unwanted in "${PLUGIN_DIR}/.github/" "${PLUGIN_DIR}/bin/" "${PLUGIN_DIR}/docs/" \
                 "${PLUGIN_DIR}/PLAN.md" "${PLUGIN_DIR}/node_modules/"; do
-    if unzip -Z1 "$ZIP" | grep -q "^${unwanted}"; then
+    if printf '%s\n' "$ENTRIES" | grep -q "^${unwanted}"; then
         echo "error: '$unwanted' no deberia estar en el ZIP (revisa .gitattributes)" >&2
         exit 1
     fi
@@ -89,7 +95,7 @@ done
 for required in "${PLUGIN_DIR}/version.php" "${PLUGIN_DIR}/LICENSE" \
                 "${PLUGIN_DIR}/amd/build/injector.min.js" \
                 "${PLUGIN_DIR}/lang/en/local_coursegradebadge.php"; do
-    if ! unzip -Z1 "$ZIP" | grep -q "^${required}$"; then
+    if ! printf '%s\n' "$ENTRIES" | grep -q "^${required}$"; then
         echo "error: falta '$required' en el ZIP" >&2
         exit 1
     fi
@@ -99,5 +105,5 @@ echo "OK  $ZIP"
 echo "    release   $RELEASE"
 echo "    version   $VERSION"
 echo "    ref       $REF ($(git rev-parse --short "${REF}^{commit}"))"
-echo "    ficheros  $(unzip -Z1 "$ZIP" | grep -cv '/$')"
+echo "    ficheros  $(printf "%s\n" "$ENTRIES" | grep -cv "/$")"
 echo "    raiz      ${PLUGIN_DIR}/"
