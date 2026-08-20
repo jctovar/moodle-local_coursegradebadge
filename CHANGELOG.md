@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.8 — 2026-08-20
+
+### Fixed
+
+- `font-weight-bold` es una clase de Bootstrap 4, retirada en Bootstrap 5. La
+  comprobacion de estilos obsoletos de Behat la marcaba en el badge. Sustituida
+  por `fw-bold`.
+
 ## 0.1.7 — 2026-08-20
 
 ### Added

@@ -180,7 +180,7 @@ sobre la matriz Moodle 5.0/5.1 × PHP 8.2/8.3, más una pasada en MariaDB.
 
 | Versión | Contenido |
 | --- | --- |
-| 0.2 | Badge con enlace al reporte de calificaciones; etiqueta "parcial"; ajustes `fw-bold` (Bootstrap 5) |
+| 0.2 | Badge con enlace al reporte de calificaciones; etiqueta "parcial" |
 | 1.0 | Ajustes administrativos (`enabled`, filtro por categoría, estilo semáforo), caché MUC con observer de `user_graded`, suite PHPUnit/Behat, piloto SUAyED |
 
 Ver `PLAN.md` para el roadmap completo (Fases 4–8) y el registro de riesgos.
