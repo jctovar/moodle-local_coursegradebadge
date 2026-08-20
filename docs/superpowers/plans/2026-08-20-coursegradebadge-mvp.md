@@ -383,6 +383,7 @@ class get_grades extends external_api {
 
         $grades = [];
         $warnings = [];
+        $permitted = [];
 
         foreach ($courseids as $courseid) {
             try {
@@ -417,15 +418,21 @@ class get_grades extends external_api {
                 continue;
             }
 
-            $entry = grade_resolver::get_course_grades((int)$USER->id, [$courseid])[$courseid];
+            $permitted[] = $courseid;
+        }
+
+        $resolved = empty($permitted) ? [] : grade_resolver::get_course_grades((int)$USER->id, $permitted);
+
+        foreach ($resolved as $entry) {
             $item = [
-                'courseid' => $courseid,
+                'courseid' => $entry->courseid,
                 'reason' => $entry->reason,
             ];
             if ($entry->reason === 'ok') {
                 $item['formatted'] = $entry->formatted;
                 $item['percentage'] = $entry->percentage;
-                $item['gradeurl'] = (new \moodle_url('/grade/report/user/index.php', ['id' => $courseid]))->out(false);
+                $item['gradeurl'] = (new \moodle_url('/grade/report/user/index.php',
+                    ['id' => $entry->courseid]))->out(false);
             }
             $grades[] = $item;
         }
