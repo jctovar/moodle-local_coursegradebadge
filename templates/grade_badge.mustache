@@ -14,6 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
+{{!
+    @template local_coursegradebadge/grade_badge
+
+    Badge showing the total course grade under the progress bar of a course card.
+
+    Context variables required for this template:
+    * label - Visible label for the badge.
+    * formatted - Grade already formatted on the server, following the course display type.
+    * arialabel - Accessible label including the grade value.
+
+    Example context (json):
+    {
+        "label": "Course total grade",
+        "formatted": "8.50",
+        "arialabel": "Course total grade: 8.50"
+    }
+}}
 <div class="lcgb-badge d-flex justify-content-between align-items-center mt-1" role="status" aria-live="polite"
      aria-label="{{arialabel}}" data-region="lcgb-badge">
     <span class="lcgb-badge-label small text-muted">{{label}}</span>

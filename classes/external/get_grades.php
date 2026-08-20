@@ -19,7 +19,7 @@
  *
  * @package    local_coursegradebadge
  * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
- * @license    https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_coursegradebadge\external;
@@ -33,19 +33,35 @@ use core_external\external_value;
 use core_external\external_warnings;
 use local_coursegradebadge\grade_resolver;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * External function returning the current user's total grade in a batch of courses.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class get_grades extends external_api {
-
+    /**
+     * Describes the parameters accepted by execute().
+     *
+     * @return external_function_parameters
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'courseids' => new external_multiple_structure(
                 new external_value(PARAM_INT, 'Course id'),
-                'Course ids to fetch the total grade for (max 50)', VALUE_DEFAULT, []
+                'Course ids to fetch the total grade for (max 50)',
+                VALUE_DEFAULT,
+                []
             ),
         ]);
     }
 
+    /**
+     * Describes the values returned by execute().
+     *
+     * @return external_function_parameters
+     */
     public static function execute_returns(): external_function_parameters {
         return new external_function_parameters([
             'grades' => new external_multiple_structure(
@@ -61,6 +77,16 @@ class get_grades extends external_api {
         ]);
     }
 
+    /**
+     * Returns the total grade of the calling user in each of the given courses.
+     *
+     * The grade is always resolved for $USER; no user id is accepted from the
+     * client. Courses the user may not see a grade for come back with a reason
+     * instead of a value.
+     *
+     * @param array $courseids Course ids to look up, capped at grade_resolver::MAX_COURSES.
+     * @return array With keys 'grades' and 'warnings'.
+     */
     public static function execute(array $courseids): array {
         global $USER;
 
@@ -98,8 +124,10 @@ class get_grades extends external_api {
                 continue;
             }
 
-            if (!has_capability('moodle/grade:view', $context)
-                    || !has_capability('local/coursegradebadge:view', $context)) {
+            if (
+                !has_capability('moodle/grade:view', $context)
+                    || !has_capability('local/coursegradebadge:view', $context)
+            ) {
                 $grades[] = [
                     'courseid' => $courseid,
                     'reason' => 'nopermission',
@@ -120,8 +148,10 @@ class get_grades extends external_api {
             if ($entry->reason === 'ok') {
                 $item['formatted'] = $entry->formatted;
                 $item['percentage'] = $entry->percentage;
-                $item['gradeurl'] = (new \moodle_url('/grade/report/user/index.php',
-                    ['id' => $entry->courseid]))->out(false);
+                $item['gradeurl'] = (new \moodle_url(
+                    '/grade/report/user/index.php',
+                    ['id' => $entry->courseid]
+                ))->out(false);
             }
             $grades[] = $item;
         }

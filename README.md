@@ -81,21 +81,35 @@ badge .lcgb-badge insertado bajo la barra de progreso
 
 ## Desarrollo
 
-Requisitos: Node.js 20+.
+### Compilar el módulo AMD
+
+El build usa el **grunt de Moodle**, no una cadena propia, de modo que la salida
+sea exactamente la que espera `moodle-plugin-ci grunt`. Requiere el plugin
+dentro de un árbol de Moodle y Node.js 22 (`lts/jod`, ver `.nvmrc` de Moodle):
 
 ```bash
+# una sola vez, en la raíz del árbol de Moodle
 npm install
-npm run build
+
+# con el plugin en local/coursegradebadge
+npx grunt amd --root=local/coursegradebadge
 ```
 
-`npm run build` compila `amd/src/injector.js` → `amd/build/injector.min.js`
-(terser). El build se commitea al repositorio.
+Genera `amd/build/injector.min.js` y `amd/build/injector.min.js.map` (rollup).
+**Ambos se commitean al repositorio**; la CI falla si no coinciden con lo que
+produce grunt a partir de `amd/src/injector.js`.
+
+Para trabajar sin copiar el plugin, un enlace simbólico basta:
+
+```bash
+ln -s /ruta/a/moodle-local_coursegradebadge <moodle>/local/coursegradebadge
+```
 
 ### Empaquetado
 
 ```bash
 bin/package.sh            # empaqueta HEAD
-bin/package.sh v0.1.1     # empaqueta un tag concreto
+bin/package.sh v0.1.2     # empaqueta un tag concreto
 ```
 
 Genera `dist/coursegradebadge-<release>.zip` con **`coursegradebadge/` como
@@ -121,7 +135,9 @@ sobre la matriz Moodle 5.0/5.1 × PHP 8.2/8.3, más una pasada en MariaDB.
 │   ├── grade_resolver.php        # cálculo y formato de calificaciones
 │   ├── hook_callbacks.php        # carga del AMD solo en /my/
 │   └── privacy/provider.php      # null_provider (GDPR)
-├── amd/src/injector.js       # inyección del badge (MutationObserver)
+├── amd/
+│   ├── src/injector.js       # inyección del badge (MutationObserver)
+│   └── build/                # salida de `grunt amd` (commiteada)
 ├── templates/                # grade_badge.mustache
 ├── styles.css
 └── lang/                     # en, es_mx
@@ -130,7 +146,9 @@ sobre la matriz Moodle 5.0/5.1 × PHP 8.2/8.3, más una pasada en MariaDB.
 ### Convenciones
 
 - Conventional Commits (en español).
-- Código sin comentarios salvo cabeceras de licencia GPL v3 canónicas.
+- Cabeceras de licencia GPL v3 canónicas y PHPDoc de fichero, clase y método
+  en todos los ficheros (lo exige el PHPDoc Checker de Moodle). Fuera de ahí,
+  comentarios solo donde el *porqué* no se deduzca del código.
 - Sin `!important` en CSS; variables Bootstrap del tema.
 
 ## Verificación manual

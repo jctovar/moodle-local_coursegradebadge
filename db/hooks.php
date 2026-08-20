@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Hook callback registrations for the plugin.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $hooks = [

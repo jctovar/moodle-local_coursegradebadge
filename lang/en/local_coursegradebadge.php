@@ -14,11 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * English language strings for the plugin.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Course grade badge';
-$string['coursegradebadge:view'] = 'View the course total grade badge on the dashboard';
-$string['badge:coursegrade'] = 'Course total grade';
 $string['badge:arialabel'] = 'Course total grade: {$a}';
+$string['badge:coursegrade'] = 'Course total grade';
+$string['coursegradebadge:view'] = 'View the course total grade badge on the dashboard';
 $string['error:context'] = 'The course grade could not be retrieved.';
+$string['pluginname'] = 'Course grade badge';
 $string['privacy:metadata'] = 'The Course grade badge plugin does not store any personal data.';

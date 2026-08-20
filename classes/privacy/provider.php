@@ -19,14 +19,24 @@
  *
  * @package    local_coursegradebadge
  * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
- * @license    https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_coursegradebadge\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Privacy API implementation: the plugin stores no personal data.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Returns the language string explaining why no personal data is stored.
+     *
+     * @return string
+     */
     public static function get_reason(): string {
         return 'privacy:metadata';
     }

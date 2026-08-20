@@ -18,7 +18,7 @@
  *
  * @module local_coursegradebadge/injector
  * @copyright 2026 FES Iztacala, UNAM — Psicología SUAyED
- * @license https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Templates) {
 
@@ -37,6 +37,12 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
     let strings = null;
     let observer = null;
 
+    /**
+     * Reads the course id a card belongs to.
+     *
+     * @param {HTMLElement} card The course card element.
+     * @return {number} The course id, or NaN when it cannot be determined.
+     */
     function extractCourseId(card) {
         const explicit = card.closest('[data-course-id]');
         if (explicit) {
@@ -46,14 +52,35 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         return match ? parseInt(match[1], 10) : NaN;
     }
 
+    /**
+     * Finds the progress bar the badge is inserted after.
+     *
+     * @param {HTMLElement} card The course card element.
+     * @return {HTMLElement|null} The progress element, or null when the card has none.
+     */
     function findAnchor(card) {
         return card.querySelector(SELECTORS.progress);
     }
 
+    /**
+     * Renders the badge template.
+     *
+     * @param {Object} context Template context.
+     * @return {Promise<string>} Resolves with the rendered HTML.
+     */
     function renderBadge(context) {
         return Templates.render('local_coursegradebadge/grade_badge', context);
     }
 
+    /**
+     * Inserts a badge into every visible card that has a resolved grade.
+     *
+     * Cards already carrying a badge are skipped, so re-running after a DOM
+     * mutation never duplicates badges.
+     *
+     * @param {Object} gradesByCourse Course id => grade entry from the web service.
+     * @return {void}
+     */
     function injectBadges(gradesByCourse) {
         document.querySelectorAll(SELECTORS.coursesView + ' ' + SELECTORS.card).forEach(function(card) {
             const courseid = extractCourseId(card);
@@ -95,6 +122,11 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         });
     }
 
+    /**
+     * Requests the grades for the pending courses, one batch at a time.
+     *
+     * @return {void}
+     */
     function fetchGrades() {
         if (pendingCourses.size === 0) {
             return;
@@ -120,6 +152,11 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         });
     }
 
+    /**
+     * Debounces fetchGrades() so a burst of mutations triggers a single request.
+     *
+     * @return {void}
+     */
     function scheduleFetch() {
         if (debounceTimer) {
             clearTimeout(debounceTimer);
@@ -127,6 +164,11 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         debounceTimer = setTimeout(fetchGrades, DEBOUNCE_MS);
     }
 
+    /**
+     * Queues every visible card that has no badge yet.
+     *
+     * @return {void}
+     */
     function collectPendingCards() {
         document.querySelectorAll(SELECTORS.coursesView + ' ' + SELECTORS.card).forEach(function(card) {
             const courseid = extractCourseId(card);
@@ -139,6 +181,11 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         }
     }
 
+    /**
+     * Watches the courses view so cards added by paging or view changes get a badge.
+     *
+     * @return {void}
+     */
     function initObserver() {
         if (observer) {
             return;
@@ -161,6 +208,11 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
         observer.observe(target, {childList: true, subtree: true});
     }
 
+    /**
+     * Entry point called from the page hook.
+     *
+     * @return {void}
+     */
     function init() {
         Str.get_strings([
             {key: 'badge:coursegrade', component: 'local_coursegradebadge'},

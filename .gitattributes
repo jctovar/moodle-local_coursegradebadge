@@ -6,8 +6,6 @@
 .gitignore       export-ignore
 bin/             export-ignore
 docs/            export-ignore
-package-lock.json export-ignore
-package.json     export-ignore
 PLAN.md          export-ignore
 
 # Normalización de finales de línea.

@@ -79,8 +79,7 @@ if [ -n "$BAD_ROOT" ]; then
 fi
 
 for unwanted in "${PLUGIN_DIR}/.github/" "${PLUGIN_DIR}/bin/" "${PLUGIN_DIR}/docs/" \
-                "${PLUGIN_DIR}/PLAN.md" "${PLUGIN_DIR}/package.json" \
-                "${PLUGIN_DIR}/node_modules/"; do
+                "${PLUGIN_DIR}/PLAN.md" "${PLUGIN_DIR}/node_modules/"; do
     if unzip -Z1 "$ZIP" | grep -q "^${unwanted}"; then
         echo "error: '$unwanted' no deberia estar en el ZIP (revisa .gitattributes)" >&2
         exit 1

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.2 — 2026-08-20
+
+### Changed
+
+- El modulo AMD se compila ahora con el **grunt de Moodle** (rollup) en lugar
+  de terser, que es lo que espera `moodle-plugin-ci grunt`. Se commitean
+  `amd/build/injector.min.js` y su `.map`. Eliminados `package.json` y
+  `package-lock.json`: el build se lanza desde la raiz del arbol de Moodle.
+- Codigo conforme al estandar `moodle` de PHP_CodeSniffer y al PHPDoc Checker:
+  docblocks de fichero, clase, metodo y constante; JSDoc en las 9 funciones del
+  injector; sintaxis corta de list(); formato de llamadas multilinea.
+- Claves de idioma ordenadas alfabeticamente y tag `@license` con el valor
+  canonico que exige moodle-cs.
+- Retirado `MOODLE_INTERNAL` de los ficheros de clase sin efectos secundarios.
+- `templates/grade_badge.mustache` incluye la seccion `@template` con contexto
+  de ejemplo que pide el Mustache Lint.
+
 ## 0.1.1 — 2026-08-20
 
 ### Security

@@ -14,11 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Plugin version and metadata.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_coursegradebadge';
-$plugin->version = 2026082001;
+$plugin->version = 2026082002;
 $plugin->requires = 2025041400;
 $plugin->supported = [500, 501];
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.1.1';
+$plugin->release = '0.1.2';

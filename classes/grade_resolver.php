@@ -19,7 +19,7 @@
  *
  * @package    local_coursegradebadge
  * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
- * @license    https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_coursegradebadge;
@@ -29,10 +29,28 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/gradelib.php');
 
+/**
+ * Resolves and formats the total course grade for a user using aggregated queries.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class grade_resolver {
-
+    /** @var int Maximum number of courses resolved in a single batch. */
     public const MAX_COURSES = 50;
 
+    /**
+     * Resolves the total course grade of a user in each of the given courses.
+     *
+     * Honours course showgrades, hidden grade items and the gradebook policy on
+     * totals that contain hidden items, so the badge never reveals more than the
+     * user grade report would.
+     *
+     * @param int $userid User to resolve the grades for.
+     * @param array $courseids Course ids, capped at self::MAX_COURSES.
+     * @return array Course id => stdClass with courseid, formatted, percentage and reason.
+     */
     public static function get_course_grades(int $userid, array $courseids): array {
         global $DB;
 
@@ -54,7 +72,7 @@ class grade_resolver {
             ];
         }
 
-        list($insql, $inparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
 
         $courses = $DB->get_records_select('course', "id $insql", $inparams, '', 'id, showgrades');
         foreach ($result as $courseid => $entry) {
@@ -93,8 +111,10 @@ class grade_resolver {
                 $result[$courseid]->reason = 'hidden';
                 continue;
             }
-            if (isset($withhiddenitems[$courseid])
-                    && $showtotals[$courseid] !== GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN) {
+            if (
+                isset($withhiddenitems[$courseid])
+                    && $showtotals[$courseid] !== GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN
+            ) {
                 $result[$courseid]->reason = 'hidden';
                 continue;
             }
@@ -127,8 +147,13 @@ class grade_resolver {
         global $DB;
 
         $now = time();
-        $records = $DB->get_records_select('grade_items', "courseid $insql AND hidden <> 0",
-            $inparams, '', 'id, courseid, hidden');
+        $records = $DB->get_records_select(
+            'grade_items',
+            "courseid $insql AND hidden <> 0",
+            $inparams,
+            '',
+            'id, courseid, hidden'
+        );
 
         $flagged = [];
         foreach ($records as $record) {
@@ -160,8 +185,13 @@ class grade_resolver {
             : GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN;
 
         $params = array_merge($inparams, ['name' => 'report_user_showtotalsifcontainhidden']);
-        $records = $DB->get_records_select('grade_settings', "courseid $insql AND name = :name",
-            $params, '', 'id, courseid, value');
+        $records = $DB->get_records_select(
+            'grade_settings',
+            "courseid $insql AND name = :name",
+            $params,
+            '',
+            'id, courseid, value'
+        );
 
         $settings = [];
         foreach ($records as $record) {

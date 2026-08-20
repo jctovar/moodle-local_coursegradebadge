@@ -19,17 +19,27 @@
  *
  * @package    local_coursegradebadge
  * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
- * @license    https://www.gnu.org/licenses/gpl-3.0.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_coursegradebadge;
 
 use core\hook\output\before_standard_head_html_generation;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Hook callbacks used to load the badge injector on the dashboard.
+ *
+ * @package    local_coursegradebadge
+ * @copyright  2026 FES Iztacala, UNAM — Psicología SUAyED
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class hook_callbacks {
-
+    /**
+     * Loads the badge injector AMD module on the dashboard pages only.
+     *
+     * @param before_standard_head_html_generation $hook The hook instance.
+     * @return void
+     */
     public static function before_standard_head_html_generation(before_standard_head_html_generation $hook): void {
         global $PAGE;
 
