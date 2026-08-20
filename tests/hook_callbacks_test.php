@@ -34,6 +34,40 @@ namespace local_coursegradebadge;
  */
 final class hook_callbacks_test extends \advanced_testcase {
     /**
+     * The callback runs without fatalling, on the dashboard and outside it.
+     *
+     * Regression test: the guard called duringinitialinstall(), which does not
+     * exist (the core function is during_initial_install()). Because the callback
+     * had never been registered, the undefined function only surfaced once the
+     * registration was fixed, and then it fatalled every page including the
+     * upgrade screen. This exercises the callback for real instead of only
+     * testing its helpers.
+     *
+     * @return void
+     */
+    public function test_callback_runs_without_error(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $hook = new \core\hook\output\before_standard_head_html_generation($PAGE->get_renderer('core'));
+
+        // Outside the dashboard the callback must bail out quietly.
+        $PAGE->set_url('/admin/index.php');
+        \local_coursegradebadge\hook_callbacks::before_standard_head_html_generation($hook);
+
+        // On the dashboard it must reach js_call_amd() without raising anything.
+        $page = new \moodle_page();
+        $page->set_url('/my/index.php');
+        $page->set_context(\context_system::instance());
+        $PAGE = $page;
+        \local_coursegradebadge\hook_callbacks::before_standard_head_html_generation($hook);
+
+        // Reaching this point without an Error or exception is the assertion.
+        $this->assertTrue(true);
+    }
+
+    /**
      * The callback is actually registered with the hook manager.
      *
      * Regression test: db/hooks.php must define $callbacks. Moodle's hook manager

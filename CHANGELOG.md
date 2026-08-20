@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.5 — 2026-08-20
+
+### Fixed
+
+- **Fatal en cualquier pagina, incluida la de actualizacion.** La guarda del
+  callback llamaba a `duringinitialinstall()`, funcion que no existe; la de core
+  es `during_initial_install()` (`lib/setuplib.php:1012`). El fallo estaba
+  latente desde el primer commit y solo se manifesto al corregir el registro del
+  hook en 0.1.4, cuando la linea se ejecuto por primera vez.
+
+### Added
+
+- Test que **ejecuta** el callback, dentro y fuera del dashboard. Los tests
+  anteriores solo cubrian sus auxiliares, que es por lo que el fallo paso la CI.
+
 ## 0.1.4 — 2026-08-20
 
 ### Fixed

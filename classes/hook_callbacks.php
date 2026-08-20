@@ -43,7 +43,7 @@ class hook_callbacks {
     public static function before_standard_head_html_generation(before_standard_head_html_generation $hook): void {
         global $PAGE;
 
-        if (duringinitialinstall() || !isloggedin() || isguestuser()) {
+        if (during_initial_install() || !isloggedin() || isguestuser()) {
             return;
         }
 
