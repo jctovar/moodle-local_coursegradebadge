@@ -73,8 +73,10 @@ class get_grades extends external_api {
 
         foreach ($courseids as $courseid) {
             try {
-                self::validate_context(context_course::instance($courseid));
+                $context = context_course::instance($courseid);
+                self::validate_context($context);
             } catch (\moodle_exception $e) {
+                debugging($e->getMessage(), DEBUG_DEVELOPER);
                 $grades[] = [
                     'courseid' => $courseid,
                     'reason' => 'error',
@@ -83,12 +85,12 @@ class get_grades extends external_api {
                     'item' => 'course',
                     'itemid' => $courseid,
                     'warningcode' => 'contexterror',
-                    'message' => $e->getMessage(),
+                    'message' => get_string('error:context', 'local_coursegradebadge'),
                 ];
                 continue;
             }
 
-            if (has_capability('moodle/grade:viewall', context_course::instance($courseid))) {
+            if (has_capability('moodle/grade:viewall', $context)) {
                 $grades[] = [
                     'courseid' => $courseid,
                     'reason' => 'nopermission',
@@ -96,7 +98,8 @@ class get_grades extends external_api {
                 continue;
             }
 
-            if (!has_capability('local/coursegradebadge:view', context_course::instance($courseid))) {
+            if (!has_capability('moodle/grade:view', $context)
+                    || !has_capability('local/coursegradebadge:view', $context)) {
                 $grades[] = [
                     'courseid' => $courseid,
                     'reason' => 'nopermission',

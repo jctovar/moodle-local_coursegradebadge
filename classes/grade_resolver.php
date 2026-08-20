@@ -73,6 +73,9 @@ class grade_resolver {
             $gradeitembycourse[$itemrecord->courseid] = new \grade_item($itemrecord, false);
         }
 
+        $withhiddenitems = self::courses_with_hidden_items($insql, $inparams);
+        $showtotals = self::showtotals_settings($courseids, $insql, $inparams);
+
         $sql = "SELECT gi.courseid, gg.finalgrade, gg.hidden AS gradehidden, gg.excluded
                   FROM {grade_grades} gg
                   JOIN {grade_items} gi ON gi.id = gg.itemid
@@ -90,6 +93,11 @@ class grade_resolver {
                 $result[$courseid]->reason = 'hidden';
                 continue;
             }
+            if (isset($withhiddenitems[$courseid])
+                    && $showtotals[$courseid] !== GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN) {
+                $result[$courseid]->reason = 'hidden';
+                continue;
+            }
             if ($record->excluded || $record->finalgrade === null) {
                 continue;
             }
@@ -103,5 +111,71 @@ class grade_resolver {
         }
 
         return $result;
+    }
+
+    /**
+     * Courses among the given ones that contain at least one hidden grade item.
+     *
+     * Mirrors \grade_object::is_hidden(): 1 means always hidden, any other non-zero
+     * value is a "hidden until" timestamp that only hides while it lies in the future.
+     *
+     * @param string $insql IN fragment produced by get_in_or_equal for the course ids.
+     * @param array $inparams Named parameters for $insql.
+     * @return array Course id => true, for courses with at least one hidden item.
+     */
+    private static function courses_with_hidden_items(string $insql, array $inparams): array {
+        global $DB;
+
+        $now = time();
+        $records = $DB->get_records_select('grade_items', "courseid $insql AND hidden <> 0",
+            $inparams, '', 'id, courseid, hidden');
+
+        $flagged = [];
+        foreach ($records as $record) {
+            $hidden = (int)$record->hidden;
+            if ($hidden === 1 || $hidden > $now) {
+                $flagged[(int)$record->courseid] = true;
+            }
+        }
+
+        return $flagged;
+    }
+
+    /**
+     * Effective report_user_showtotalsifcontainhidden setting per course.
+     *
+     * Resolved in a single query instead of one grade_get_setting() call per course,
+     * falling back to the site default when the course has no override.
+     *
+     * @param array $courseids Course ids being resolved.
+     * @param string $insql IN fragment produced by get_in_or_equal for the course ids.
+     * @param array $inparams Named parameters for $insql.
+     * @return array Course id => int setting value.
+     */
+    private static function showtotals_settings(array $courseids, string $insql, array $inparams): array {
+        global $CFG, $DB;
+
+        $default = isset($CFG->grade_report_user_showtotalsifcontainhidden)
+            ? (int)$CFG->grade_report_user_showtotalsifcontainhidden
+            : GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN;
+
+        $params = array_merge($inparams, ['name' => 'report_user_showtotalsifcontainhidden']);
+        $records = $DB->get_records_select('grade_settings', "courseid $insql AND name = :name",
+            $params, '', 'id, courseid, value');
+
+        $settings = [];
+        foreach ($records as $record) {
+            if ($record->value !== null && $record->value !== '') {
+                $settings[(int)$record->courseid] = (int)$record->value;
+            }
+        }
+
+        foreach ($courseids as $courseid) {
+            if (!isset($settings[$courseid])) {
+                $settings[$courseid] = $default;
+            }
+        }
+
+        return $settings;
     }
 }

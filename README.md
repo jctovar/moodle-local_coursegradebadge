@@ -69,9 +69,14 @@ badge .lcgb-badge insertado bajo la barra de progreso
 
 - El cálculo ocurre en el servidor: se respetan `is_hidden()`, `is_excluded()`
   y `showgrades` de cada curso.
+- **Totales con ítems ocultos**: si el curso contiene algún ítem oculto, el
+  badge solo se muestra cuando el ajuste `report_user_showtotalsifcontainhidden`
+  del curso (o su valor de sitio) es *Mostrar el total real*. En cualquier otro
+  caso el badge se omite, para no revelar por agregación lo que el informe de
+  calificaciones deja en blanco o recalcula.
 - La función externa opera siempre sobre `$USER->id` (nunca acepta `userid`
-  del cliente) y exige la capability `local/coursegradebadge:view`
-  (permitida por defecto al rol *estudiante*).
+  del cliente) y exige `moodle/grade:view` más la capability
+  `local/coursegradebadge:view` (permitida por defecto al rol *estudiante*).
 
 ## Desarrollo
 
@@ -114,6 +119,9 @@ npm run build
    del curso (real / porcentaje / letra).
 3. Estudiante sin nota, curso sin ítems calificables o libro oculto →
    **sin** badge.
+   - Curso con un ítem oculto y *Ocultar totales si contienen ítems ocultos*
+     → **sin** badge; cambiando el ajuste a *Mostrar el total real* → badge
+     visible.
 4. Docente/administrador → **sin** badge (respuesta `nopermission`).
 5. Cambio de vista *Tarjetas → Lista → Resumen*: el badge persiste o reaparece.
 6. Paginación / carga perezosa: el badge aparece en las nuevas tarjetas.

@@ -20,4 +20,5 @@ $string['pluginname'] = 'Insignia de calificación del curso';
 $string['coursegradebadge:view'] = 'Ver la insignia con la calificación total del curso en el panel';
 $string['badge:coursegrade'] = 'Calificación total del curso';
 $string['badge:arialabel'] = 'Calificación total del curso: {$a}';
+$string['error:context'] = 'No fue posible obtener la calificación del curso.';
 $string['privacy:metadata'] = 'El plugin Insignia de calificación del curso no almacena datos personales.';
