@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.4 — 2026-08-20
+
+### Fixed
+
+- **El callback del hook nunca estuvo registrado.** `db/hooks.php` definia
+  `$hooks`, pero el gestor de hooks de Moodle incluye el fichero y lee la
+  variable `$callbacks` (`lib/classes/hook/manager.php:520`). Al quedar vacia,
+  el listener se descartaba en silencio, sin aviso ni entrada en el log, y el
+  modulo AMD no se cargaba en ninguna instalacion. Esta era la causa real de que
+  el badge no apareciera; el fallo del subdirectorio corregido en 0.1.3 quedaba
+  tapado por este.
+
+### Added
+
+- Test de regresion que comprueba que el callback figura en el gestor de hooks.
+
 ## 0.1.3 — 2026-08-20
 
 ### Fixed

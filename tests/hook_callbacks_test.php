@@ -34,6 +34,30 @@ namespace local_coursegradebadge;
  */
 final class hook_callbacks_test extends \advanced_testcase {
     /**
+     * The callback is actually registered with the hook manager.
+     *
+     * Regression test: db/hooks.php must define $callbacks. Moodle's hook manager
+     * includes the file and reads that exact variable, so naming it $hooks left the
+     * listener silently unregistered and the AMD module never loaded.
+     *
+     * @return void
+     */
+    public function test_callback_is_registered(): void {
+        $this->resetAfterTest();
+
+        $callbacks = \core\hook\manager::get_instance()->get_callbacks_for_hook(
+            \core\hook\output\before_standard_head_html_generation::class
+        );
+
+        $callables = array_column($callbacks, 'callback');
+        $this->assertContains(
+            hook_callbacks::class . '::before_standard_head_html_generation',
+            $callables,
+            'The plugin hook callback is not registered; check that db/hooks.php defines $callbacks.'
+        );
+    }
+
+    /**
      * The dashboard is recognised when Moodle is served from the web root.
      *
      * @return void

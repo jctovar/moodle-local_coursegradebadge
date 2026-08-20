@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$hooks = [
+$callbacks = [
     [
         'hook' => \core\hook\output\before_standard_head_html_generation::class,
         'callback' => [\local_coursegradebadge\hook_callbacks::class, 'before_standard_head_html_generation'],
