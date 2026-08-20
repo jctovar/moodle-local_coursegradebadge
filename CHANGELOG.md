@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.6 — 2026-08-20
+
+### Changed
+
+- **El injector deja de fallar en silencio.** Los tres `.catch()` devolvian
+  `null` sin reportar nada, de modo que un fallo al cargar los strings, al
+  llamar al servicio o al renderizar la plantilla no dejaba rastro alguno en la
+  consola: sintoma indistinguible de "el modulo no se ha cargado". Ahora se
+  reportan con `core/notification`.
+
 ## 0.1.5 — 2026-08-20
 
 ### Fixed

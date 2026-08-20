@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_coursegradebadge';
-$plugin->version = 2026082005;
+$plugin->version = 2026082006;
 $plugin->requires = 2025041400;
 $plugin->supported = [500, 501];
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.1.5';
+$plugin->release = '0.1.6';

@@ -20,7 +20,8 @@
  * @copyright 2026 FES Iztacala, UNAM — Psicología SUAyED
  * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Templates) {
+define(['core/ajax', 'core/str', 'core/templates', 'core/notification'],
+        function(Ajax, Str, Templates, Notification) {
 
     // Every card in the cards, list and summary views of block_myoverview carries
     // data-region="course-content", and the progress is rendered as .progress-text
@@ -120,9 +121,7 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
                     card.appendChild(node);
                 }
                 return null;
-            }).catch(function() {
-                return null;
-            });
+            }).catch(Notification.exception);
         });
     }
 
@@ -151,9 +150,7 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
                 fetchGrades();
             }
             return null;
-        }).catch(function() {
-            return null;
-        });
+        }).catch(Notification.exception);
     }
 
     /**
@@ -226,9 +223,7 @@ define(['core/ajax', 'core/str', 'core/templates'], function(Ajax, Str, Template
             collectPendingCards();
             initObserver();
             return null;
-        }).catch(function() {
-            return null;
-        });
+        }).catch(Notification.exception);
     }
 
     return {init: init};
